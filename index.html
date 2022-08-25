@@ -11,10 +11,12 @@
         <script src="js/func.js"></script>
         <title>Lottery Wheel</title>
     </head>
-    <body>
-        <div class="background">
+    <body class="background">
+        <div>
             <h1>Simple Lottery Wheel</h1>
+            <!-- Setting -->
             <div>
+                <!-- Select form -->
                 <select id="total" class="form-select" aria-label="Default select example">
                     <option value="0" selected>Please select the numbers of pieces in wheel</option>
                     <option value="1">1</option>
@@ -23,10 +25,15 @@
                     <option value="4">4</option>
                 </select>
                 <div style="height: 1rem;"></div>
+                <!-- Renew button -->
                 <button id="renew" type="button" class="btn btn-primary">更新輪盤</button>
-                <div id="sels"></div>
+                <div style="height: 1rem;"></div>
+                <!-- Probability setting -->
+                <div id="sels">
+                </div>
             </div>
             <div style="height: 50px;"></div>
+            <!-- Wheel -->
             <div id="wheel"></div>
         </div>
     </body>
@@ -38,8 +45,14 @@
         $('#wheel').empty();
         for(let i = 0; i < $('#total').val(); i++){
             var color = 'rgb(' + ran() + ',' + ran() + ',' + ran() + ')';
-            var piece = '<div class="piece" style="background-color:'+color+'"></div>';
-            var sel = '<div></div>'
+            var piece = '<div class="piece" style="background-color: '+ color +'"></div>';
+            var sel =   '<div class="sel">\
+                            <div class="dot">\
+                                <div class="color" style="background-color: '+ color +'"></div>\
+                            </div>\
+                            <input type="text" class="text-box">\
+                            <input type="text" class="text-box">\
+                        </div>'
             $('#sels').append(sel);
             $('#wheel').append(piece);
         }
