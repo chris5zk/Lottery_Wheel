@@ -22,17 +22,13 @@
         <!-- Title -->
         <h1>Simple Lottery Wheel</h1>
         <!-- Select form -->
-        <select id="total" class="form-select" aria-label="Default select example">
-            <option value="0" selected>Please select the numbers of pieces in wheel</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-        </select>
+        <input id="total" type="text" class="text-box" placeholder="Please Enter the Numbers of lottery" style="width: 70%; ;">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foolproof" style="width: 25%; ;">Renew</button>
         <div style="height: 1rem;"></div>
-
-        <!-- Renew button -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foolproof">Renew Wheel</button>
+        <div class="alert alert-info" role="alert" style="margin: 0.5rem;">
+            Larger quantity may cause accumulative error
+        </div>
+        <div style="height: 1rem;"></div>
         
         <!-- Modal -->
         <div class="modal fade" id="foolproof" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -56,14 +52,17 @@
         <!-- Probability setting -->
         <div id="prob"></div>
         <div id="sels"></div>
-        <div style="height: 50px;"></div>
-        
+        <div style="height: 2rem;"></div>
+        <div class="alert alert-danger" role="alert" style="display: none;">
+            The probabilty is over 100%. Please enter again.
+        </div>
+
         <!-- Wheel -->
         <div id="wheel">
             <div id="left-mask"></div>
             <div id="right-mask"></div>
         </div>
-        <div style="height: 2rem;"></div>
+        
     </body>
 </html>
 
@@ -108,11 +107,19 @@
             // Keep detecting the Setting Input
             $(".prob").change(function(){
                 var angles = [];
+                var sum = 0;
                 for(let i = 1; i <= total; i++){
                     prob = Number($('#sels .sel:nth-child('+ i +') :nth-child(3)').val());
                     angles.push(toAngle(prob));
+                    sum += prob;
                 }
-                Generate_wheel(colors, total, angles)
+                console.log(sum);
+                if(sum <= 100){
+                    $('.alert').css('display', 'none');
+                    Generate_wheel(colors, total, angles)
+                }
+                else
+                    $('.alert').css('display','block');
             });
         });
 
@@ -121,18 +128,19 @@
                 <div class="dot">\
                     <div class="color" style="background-color: '+ color +'"></div>\
                 </div>\
-                <input type="text" class="text-box award" placeholder="請輸入獎品">\
+                <input type="text" class="text-box award" placeholder="lottery">\
                 <input type="text" class="text-box prob" value="'+ prob +'" placeholder="%">\
             </div>'
             $('#sels').append(sel); 
         }
 
         function Generate_wheel(colors, total, angles){
+            // Clean wheel
             $('#left-mask').empty();
             $('#right-mask').empty();
+
             var z = 10;
             acc = toAcc(angles)
-            console.log('acc:',acc);
 
             // first piece
             var piece = '<div class="piece" style="background-color: ' + colors[0] + '; z-index: ' + ++z + ';"></div>';
@@ -142,18 +150,19 @@
             for(let i = 0; i < acc.length; i++){        
                 if(acc[i] > 180){
                     if(angles[i] > 180){
-                        console.log(i, 'angle:', angles[i]);
+                        var piece = '<div class="piece" style="background-color: ' + colors[i] + '; z-index: ' + z + '; transform: rotate(' + (acc[i]-180) + 'deg);"></div>';
+                        $('#left-mask').append(piece);
+                        var piece = '<div class="piece" style="background-color: ' + colors[i+1] + '; z-index: ' + ++z + '; transform: rotate(' + acc[i] + 'deg);"></div>';
+                        $('#left-mask').append(piece);
                     }
                     else{
                         var piece = '<div class="piece" style="background-color: ' + colors[i+1] + '; z-index: ' + ++z + '; transform: rotate(' + acc[i] + 'deg);"></div>';
                         $('#left-mask').append(piece);
-                        console.log('left:', i, 'angle:', angles[i], 'acc:', acc[i]);
                     }
                 }
                 else{
                     var piece = '<div class="piece" style="background-color: ' + colors[i+1] + '; z-index: ' + ++z + '; transform: rotate(' + acc[i] + 'deg);"></div>';
                     $('#right-mask').append(piece);
-                    console.log('right:', i, 'angle:', angles[i], 'acc:', acc[i]);
                 }
             }
         }

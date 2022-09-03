@@ -75,10 +75,12 @@ html, body{
     position: relative;
     width: 400px;
     height: 400px;
+    border: solid yellow 2px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 100%;
     background-color: white;
+    animation: rotate 5s linear infinite;
 }
 
 #left-mask{
@@ -98,24 +100,6 @@ html, body{
     clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
 }
 
-#test{
-    position: absolute;
-    overflow: hidden;
-    margin-left: auto;
-    margin-right: auto;
-    width: 400px;
-    height: 400px;
-    background-color: red;
-}
-
-.in{
-    position: absolute;
-    float: left;
-    width: 500px;
-    height: 300px;
-    background-color: aquamarine;
-}
-
 /* animation */
 @keyframes rotate {
     from{transform: rotate(0deg);}
@@ -129,8 +113,21 @@ html, body{
         height: 300px;
     }
 
+    #left-mask{
+        width: 150px;
+        height: 300px;
+    }
+
     .piece{
-        clip: rect(0, 300px, 300px, 150px);
+        width: 300px;
+        height: 300px;
+        clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+    }
+}
+
+@media screen and (max-width: 440px){
+    .sel{
+        width: 100%;
     }
 }
 
@@ -140,8 +137,14 @@ html, body{
         height: 250px;
     }
 
+    #left-mask{
+        width: 125px;
+        height: 250px;
+    }
+
     .piece{
-        clip: rect(0, 250px, 250px, 125px);
+        width: 250px;
+        height: 250px;
     }
 }
 
@@ -151,7 +154,13 @@ html, body{
         height: 200px;
     }
 
+    #left-mask{
+        width: 100px;
+        height: 200px;
+    }
+
     .piece{
-        clip: rect(0, 200px, 200px, 100px);
+        width: 200px;
+        height: 200px;
     }
 }
