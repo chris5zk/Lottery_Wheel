@@ -4,62 +4,159 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="img/wheel.ico" type="image/x-icon">
-        <link rel="stylesheet" href="css/template.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="js/func.js"></script>
         <title>Lottery Wheel</title>
+        <!-- Website Icon -->
+        <link rel="icon" href="img/wheel.ico" type="image/x-icon">
+        <!-- CSS Fille -->
+        <link rel="stylesheet" href="css/template.css">
+        <!--  bootstrap CSS  -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+        <!--   bootstrap JS  -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+        <!--     JQuery      -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- JavaScript File -->
+        <script src="js/func.js"></script>
     </head>
     <body class="background">
-        <div>
-            <h1>Simple Lottery Wheel</h1>
-            <!-- Setting -->
-            <div>
-                <!-- Select form -->
-                <select id="total" class="form-select" aria-label="Default select example">
-                    <option value="0" selected>Please select the numbers of pieces in wheel</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
-                <div style="height: 1rem;"></div>
-                <!-- Renew button -->
-                <button id="renew" type="button" class="btn btn-primary">更新輪盤</button>
-                <div style="height: 1rem;"></div>
-                <!-- Probability setting -->
-                <div id="sels">
+        <!-- Title -->
+        <h1>Simple Lottery Wheel</h1>
+        <!-- Select form -->
+        <select id="total" class="form-select" aria-label="Default select example">
+            <option value="0" selected>Please select the numbers of pieces in wheel</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <div style="height: 1rem;"></div>
+
+        <!-- Renew button -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foolproof">Renew Wheel</button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="foolproof" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Renew Wheel</h5>
+                    </div>
+                    <div class="modal-body">
+                        All data currently on the wheel will be lost.<br>Are you sure you want to continue?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="renew" type="button" class="btn btn-primary" data-bs-dismiss="modal">Renew</button>
+                    </div>
                 </div>
             </div>
-            <div style="height: 50px;"></div>
-            <!-- Wheel -->
-            <div id="wheel"></div>
         </div>
+        <div style="height: 1rem;"></div>
+
+        <!-- Probability setting -->
+        <div id="prob"></div>
+        <div id="sels"></div>
+        <div style="height: 50px;"></div>
+        
+        <!-- Wheel -->
+        <div id="wheel">
+            <div id="left-mask"></div>
+            <div id="right-mask"></div>
+        </div>
+        <div style="height: 2rem;"></div>
     </body>
 </html>
 
 <script>
-    $('#renew').click(function() {
-        $('#sels').empty();
-        $('#wheel').empty();
-        for(let i = 0; i < $('#total').val(); i++){
-            var color = 'rgb(' + ran() + ',' + ran() + ',' + ran() + ')';
-            var piece = '<div class="piece" style="background-color: '+ color +'"></div>';
-            var sel =   '<div class="sel">\
-                            <div class="dot">\
-                                <div class="color" style="background-color: '+ color +'"></div>\
-                            </div>\
-                            <input type="text" class="text-box">\
-                            <input type="text" class="text-box">\
-                        </div>'
-            $('#sels').append(sel);
-            $('#wheel').append(piece);
+    $(document).ready(function(){
+        // Generate Wheel
+        $('#renew').click(function() {
+            // reset Setting block
+            $('#prob').empty();
+            $('#sels').empty();           
+
+            // Setting block title
+            var total = Number($('#total').val());
+            if(total != 0)
+                $('#prob').append('<h3 id="probs">Probability Setting</h3>');
+
+            // Generate
+            var p_acc = 0;
+            var angles = [];
+            var colors = [];
+            for(let i = 0; i < total; i++){
+                // Random color
+                var color = 'rgb(' + ran() + ',' + ran() + ',' + ran() + ')';
+                colors.push(color);
+
+                // Setting block         
+                if(i == total - 1)
+                    var prob = 100 - p_acc;
+                else{
+                    var prob = Math.round(100 / total);
+                    p_acc += prob;
+                }
+                angles.push(toAngle(prob));
+
+                Generate_sel(color, prob);       
+            }
+
+            // Generate Wheel
+            colors.push('white');
+            Generate_wheel(colors, total, angles);
+
+            // Keep detecting the Setting Input
+            $(".prob").change(function(){
+                var angles = [];
+                for(let i = 1; i <= total; i++){
+                    prob = Number($('#sels .sel:nth-child('+ i +') :nth-child(3)').val());
+                    angles.push(toAngle(prob));
+                }
+                Generate_wheel(colors, total, angles)
+            });
+        });
+
+        function Generate_sel(color, prob){
+            var sel  = '<div class="sel">\
+                <div class="dot">\
+                    <div class="color" style="background-color: '+ color +'"></div>\
+                </div>\
+                <input type="text" class="text-box award" placeholder="請輸入獎品">\
+                <input type="text" class="text-box prob" value="'+ prob +'" placeholder="%">\
+            </div>'
+            $('#sels').append(sel); 
+        }
+
+        function Generate_wheel(colors, total, angles){
+            $('#left-mask').empty();
+            $('#right-mask').empty();
+            var z = 10;
+            acc = toAcc(angles)
+            console.log('acc:',acc);
+
+            // first piece
+            var piece = '<div class="piece" style="background-color: ' + colors[0] + '; z-index: ' + ++z + ';"></div>';
+            $('#right-mask').append(piece);
+
+            // other rotated piece
+            for(let i = 0; i < acc.length; i++){        
+                if(acc[i] > 180){
+                    if(angles[i] > 180){
+                        console.log(i, 'angle:', angles[i]);
+                    }
+                    else{
+                        var piece = '<div class="piece" style="background-color: ' + colors[i+1] + '; z-index: ' + ++z + '; transform: rotate(' + acc[i] + 'deg);"></div>';
+                        $('#left-mask').append(piece);
+                        console.log('left:', i, 'angle:', angles[i], 'acc:', acc[i]);
+                    }
+                }
+                else{
+                    var piece = '<div class="piece" style="background-color: ' + colors[i+1] + '; z-index: ' + ++z + '; transform: rotate(' + acc[i] + 'deg);"></div>';
+                    $('#right-mask').append(piece);
+                    console.log('right:', i, 'angle:', angles[i], 'acc:', acc[i]);
+                }
+            }
         }
     });
-
-    function ran(){
-        return Math.floor(Math.random() * 255);
-    }
 
 </script>
