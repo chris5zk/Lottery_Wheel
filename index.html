@@ -51,10 +51,14 @@
         <div id="prob"></div>
         <div id="sels"></div>
         <div style="height: 1rem;"></div>
-        <div class="alert alert-danger" role="alert" style="display: none;">
-            The probabilty is over 100%. Please enter again.
+        <div id="overflow" class="alert alert-danger" role="alert" style="display: none;">
+            The probabilty is over 100%. Please reconfirm the probability!
         </div>
-        <div style="height: 2rem;"></div>
+        <div style="height: 1rem;"></div>
+        <div id="negative" class="alert alert-danger" role="alert" style="display: none;">
+            The probabilty can't be negative. Please enter again!
+        </div>
+        <div style="height: 1rem;"></div>
 
         <!-- Wheel -->
         <div id="machine">
@@ -130,14 +134,30 @@
                     prob = Number($('#sels .sel:nth-child('+ i +') :nth-child(3)').val());
                     angles.push(toAngle(prob));
                     sum += prob;
+                    if(prob <0 )    var neg = 1;
                 }
-                // overflow probability
-                if(sum <= 100){
-                    $('.alert').css('display', 'none');
+                // overflow probability and negative probability check
+                if(sum > 100 || neg){
+                    $('#spin').attr('disabled','');
+                    if(sum > 100){
+                        $('#overflow').css('display','block');
+                        $('#negative').css('display','none');
+                    }
+                    if(neg){
+                        $('#overflow').css('display','none');
+                        $('#negative').css('display','block');                   
+                    }
+                    if(sum > 100 && neg){
+                        $('#overflow').css('display','block');
+                        $('#negative').css('display','block');
+                    } 
+                }
+                else{
+                    $('#overflow').css('display', 'none');
+                    $('#negative').css('display', 'none');
+                    $('#spin').removeAttr('disabled');
                     Generate_wheel(colors, total, angles)
-                }
-                else
-                    $('.alert').css('display','block');
+                }          
             });
         });
 
