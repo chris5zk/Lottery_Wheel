@@ -5,30 +5,29 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lottery Wheel</title>
-        <!-- Website Icon -->
+        <!--  Website Icon -->
         <link rel="icon" href="img/wheel.ico" type="image/x-icon">
-        <!-- CSS Fille -->
+        <!--  CSS Fille -->
         <link rel="stylesheet" href="css/template.css">
         <!--  bootstrap CSS  -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-        <!--   bootstrap JS  -->
+        <!--  bootstrap JS  -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-        <!--     JQuery      -->
+        <!--  JQuery      -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- JavaScript File -->
+        <!--  JavaScript File -->
         <script src="js/func.js"></script>
     </head>
     <body class="background">
         <!-- Title -->
         <h1>Simple Lottery Wheel</h1>
         <!-- Select form -->
-        <input id="total" type="text" class="text-box" placeholder="Please Enter the Numbers of lottery" style="width: 70%; ;">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foolproof" style="width: 25%; ;">Renew</button>
+        <input id="total" type="text" class="text-box" placeholder="Please Enter the Numbers of lottery">
+        <button id="upload" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#foolproof">Renew</button>
         <div style="height: 1rem;"></div>
         <div class="alert alert-info" role="alert" style="margin: 0.5rem;">
             Larger quantity may cause accumulative error
         </div>
-        <div style="height: 1rem;"></div>
         
         <!-- Modal -->
         <div class="modal fade" id="foolproof" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -47,27 +46,38 @@
                 </div>
             </div>
         </div>
-        <div style="height: 1rem;"></div>
 
         <!-- Probability setting -->
         <div id="prob"></div>
         <div id="sels"></div>
-        <div style="height: 2rem;"></div>
+        <div style="height: 1rem;"></div>
         <div class="alert alert-danger" role="alert" style="display: none;">
             The probabilty is over 100%. Please enter again.
         </div>
+        <div style="height: 2rem;"></div>
 
         <!-- Wheel -->
-        <div id="wheel">
-            <div id="left-mask"></div>
-            <div id="right-mask"></div>
+        <div id="machine">
+            <div id="pin"></div>
+            <div id="center"></div>
+            <div id="wheel"> 
+                <div id="left-mask"></div>
+                <div id="right-mask"></div>
+            </div>
         </div>
         
+        <div style="height: 2rem;"></div>
+        <button id="spin" type="button" class="btn btn-danger" style="width: 100%;" disabled>Spin</button>
     </body>
 </html>
 
 <script>
     $(document).ready(function(){
+        // stop condition
+        var award = []
+        var stop_total = 0;
+        var stop_degree = 0;
+
         // Generate Wheel
         $('#renew').click(function() {
             // reset Setting block
@@ -76,8 +86,12 @@
 
             // Setting block title
             var total = Number($('#total').val());
-            if(total != 0)
+            stop_total = total;
+            if(total != 0){
                 $('#prob').append('<h3 id="probs">Probability Setting</h3>');
+                $('#spin').removeAttr('disabled');
+            }
+                
 
             // Generate
             var p_acc = 0;
@@ -113,7 +127,7 @@
                     angles.push(toAngle(prob));
                     sum += prob;
                 }
-                console.log(sum);
+                // overflow probability
                 if(sum <= 100){
                     $('.alert').css('display', 'none');
                     Generate_wheel(colors, total, angles)
@@ -134,14 +148,15 @@
             $('#sels').append(sel); 
         }
 
+        // Wheel
         function Generate_wheel(colors, total, angles){
             // Clean wheel
             $('#left-mask').empty();
             $('#right-mask').empty();
 
             var z = 10;
-            acc = toAcc(angles)
-
+            acc = toAcc(angles);
+            award = acc;
             // first piece
             var piece = '<div class="piece" style="background-color: ' + colors[0] + '; z-index: ' + ++z + ';"></div>';
             $('#right-mask').append(piece);
@@ -166,6 +181,55 @@
                 }
             }
         }
+
+        // spin button
+        $('#spin').click(function(){
+            // disabled spin button
+            $('#spin').attr('disabled','');
+
+            // rotate
+            var count = Math.ceil(Math.random() * 4 + 1);
+            var animation = 'rotate 3s linear 0s ' + count + ' forwards';
+            $('#wheel').css('animation', animation);
+
+            // Last circle
+            var timeoutID = setTimeout(Last, (count-1)* 3 *1000);
+            function Last(){
+                // stop degree
+                var degree = Math.ceil(Math.random() * 359);
+                stop_degree = degree;
+                document.documentElement.style.setProperty('--degree', degree + 'deg');
+                var animation = 'rotate 3s ease-out 0s ' + count + ' forwards';
+                $('#wheel').css('animation', animation);
+            }
+
+        });
+
+        // restart animation
+        $('#wheel').each(function(){         
+            $('#wheel')[0].addEventListener('animationend',function(){              
+                $('#spin').removeAttr('disabled');
+                $('#wheel').css('animation', '');
+                var bingo = 0;
+                for(let i = 0; i < award.length; i++){
+                    if((360 - stop_degree) < award[i]){
+                        bingo += 1;
+                        var inform = 'Congratulations!!! You win the 【'
+                        + $('#sels .sel:nth-child('+ (i+1) +') :nth-child(2)').val() + 
+                        '】 in the lottery!!!!!!';
+                        alert(inform);
+                        break;
+                    }
+                }
+                // nothing draw
+                if(bingo == 0){
+                    var inform = 'You earn Nothing!!!';
+                    alert(inform);
+                }
+                document.documentElement.style.setProperty('--degree', '0deg');
+            });
+        });
+
     });
 
 </script>

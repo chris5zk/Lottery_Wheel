@@ -16,6 +16,15 @@ html, body{
     padding-left: 10%;
     padding-right: 10%;
 }
+/* Select total */
+#total{
+    width: 80%;
+}
+
+#upload{
+    width: 15%;
+}
+
 
 /* Probability setting */
 #sels{
@@ -71,22 +80,48 @@ html, body{
 }
 
 /* Wheel */
+#machine{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    height: auto;
+}
+
+#pin{
+    position: absolute;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    left: 50%;
+    top: -30px;
+    transform: translateX(-25px) ;
+    background-image: url(../img/pin.png);
+    background-size: cover;
+    background-position:center center;
+}
+
 #wheel{
     position: relative;
     width: 400px;
     height: 400px;
-    border: solid yellow 2px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 100%;
     background-color: white;
-    animation: rotate 5s linear infinite;
 }
 
 #left-mask{
     position: absolute;
     float: left;
     overflow: hidden;  
+    width: 200px;
+    height: 400px;
+}
+
+#right-mask{
+    position: absolute;
+    float: left;
     width: 200px;
     height: 400px;
 }
@@ -101,13 +136,29 @@ html, body{
 }
 
 /* animation */
+:root{
+    --degree: 0deg;
+}
+
 @keyframes rotate {
-    from{transform: rotate(0deg);}
-    to{transform: rotate(360deg);}
+    from{transform: rotate(360deg);}
+    to{transform: rotate(var(--degree));}
 }
 
 /* RWD */
-@media screen and (max-width: 500px){
+@media screen and (max-width: 635px){
+    #total{
+        width: 100%;
+    }
+
+    #upload{
+        width: auto;
+        margin-top: 3px;
+        margin-left: 7px;
+    }
+}
+
+@media screen and (max-width: 520px){
     #wheel{
         width: 300px;
         height: 300px;
@@ -131,7 +182,7 @@ html, body{
     }
 }
 
-@media screen and (max-width: 375px){
+@media screen and (max-width: 395px){
     #wheel{
         width: 250px;
         height: 250px;
@@ -148,7 +199,7 @@ html, body{
     }
 }
 
-@media screen and (max-width: 300px){
+@media screen and (max-width: 330px){
     #wheel{
         width: 200px;
         height: 200px;
@@ -162,5 +213,22 @@ html, body{
     .piece{
         width: 200px;
         height: 200px;
+    }
+}
+
+@media screen and (max-width: 270px){
+    #wheel{
+        width: 150px;
+        height: 150px;
+    }
+
+    #left-mask{
+        width: 75px;
+        height: 150px;
+    }
+
+    .piece{
+        width: 150px;
+        height: 150px;
     }
 }
