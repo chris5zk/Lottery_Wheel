@@ -65,7 +65,6 @@
                 <div id="right-mask"></div>
             </div>
         </div>
-        
         <div style="height: 2rem;"></div>
         <button id="spin" type="button" class="btn btn-danger" style="width: 100%;" disabled>Spin</button>
     </body>
@@ -90,8 +89,13 @@
             if(total != 0){
                 $('#prob').append('<h3 id="probs">Probability Setting</h3>');
                 $('#spin').removeAttr('disabled');
+                $('#spin').css('display', 'block');
+                $('#machine').css('display', 'block');
             }
-                
+            else{
+                $('#spin').css('display', 'none');
+                $('#machine').css('display', 'none');
+            }
 
             // Generate
             var p_acc = 0;
@@ -137,6 +141,7 @@
             });
         });
 
+        // Selection
         function Generate_sel(color, prob){
             var sel  = '<div class="sel">\
                 <div class="dot">\
