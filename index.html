@@ -69,7 +69,7 @@
                 <div id="right-mask"></div>
             </div>
         </div>
-        <div style="height: 2rem;"></div>
+        <div style="height: 3rem;"></div>
         <button id="spin" type="button" class="btn btn-danger" style="width: 100%;" disabled>Spin</button>
     </body>
 </html>
@@ -209,25 +209,28 @@
 
         // spin button
         $('#spin').click(function(){
-            // disabled spin button
-            $('#spin').attr('disabled','');
+            if(!$('.award').val())
+                alert('There are still some empty lottery!!!');
+            else{     
+                // disabled spin button
+                $('#spin').attr('disabled','');
 
-            // rotate
-            var count = Math.ceil(Math.random() * 4 + 1);
-            var animation = 'rotate 3s linear 0s ' + count + ' forwards';
-            $('#wheel').css('animation', animation);
-
-            // Last circle
-            var timeoutID = setTimeout(Last, (count-1)* 3 *1000);
-            function Last(){
-                // stop degree
-                var degree = Math.ceil(Math.random() * 359);
-                stop_degree = degree;
-                document.documentElement.style.setProperty('--degree', degree + 'deg');
-                var animation = 'rotate 3s ease-out 0s ' + count + ' forwards';
+                // rotate
+                var count = Math.ceil(Math.random() * 4 + 1);
+                var animation = 'rotate 3s linear 0s ' + count + ' forwards';
                 $('#wheel').css('animation', animation);
-            }
 
+                // Last circle
+                var timeoutID = setTimeout(Last, (count-1)* 3 *1000);
+                function Last(){
+                    // stop degree
+                    var degree = Math.ceil(Math.random() * 359);
+                    stop_degree = degree;
+                    document.documentElement.style.setProperty('--degree', degree + 'deg');
+                    var animation = 'rotate 3s ease-out 0s ' + count + ' forwards';
+                    $('#wheel').css('animation', animation);
+                }
+            }
         });
 
         // restart animation
